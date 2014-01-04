@@ -277,20 +277,6 @@ int main(int argc, char *argv[])
 		flog(LOG_WARNING, "IPv6 forwarding seems to be disabled, but continuing anyway.");
 	}
 
-	dlog(LOG_DEBUG, 3, "Initializing privsep");
-	if (privsep_init() < 0) {
-		perror("Failed to initialize privsep.");
-		exit(1);
-	}
-
-	/* drop root privileges if requested. */
-	if (username) {
-		if (drop_root_privileges(username) < 0) {
-			perror("drop_root_privileges");
-			exit(1);
-		}
-	}
-
 	/*
 	 * okay, config file is read in, socket and stuff is setup, so
 	 * lets fork now...
@@ -314,33 +300,58 @@ int main(int argc, char *argv[])
 		}
 
 		if (0 < pid) {
-			if (daemon_retval_wait(0)) {
-				flog(LOG_ERR, "Could not daemonize.");
+			switch (daemon_retval_wait(1)) {
+			case 0:
+				dlog(LOG_DEBUG, 3, "new radvd PID is %ld", pid);
+				exit(0);
+			break;
+
+			case 1:
+				flog(LOG_ERR, "radvd already running, terminating.");
 				exit(1);
+			break;
+
+			case 2:
+				flog(LOG_ERR, "Cannot create radvd PID file, terminating: %s", strerror(errno));
+				exit(2);
+			break;
+
+			default:
+				flog(LOG_ERR, "Could not daemonize.");
+				exit(-1);
+			break;
 			}
-			exit(0);
 		}
 
 		daemon_pid_file_proc = get_pidfile;
 
 		if (daemon_pid_file_is_running() >= 0) {
-			flog(LOG_ERR, "radvd already running, terminating.");
 			daemon_retval_send(1);
 			exit(1);
 		}
 
 		if (daemon_pid_file_create()) {
-			flog(LOG_ERR, "Cannot create radvd PID file, terminating: %s", strerror(errno));
 			daemon_retval_send(2);
-			exit(1);
+			exit(2);
 		}
 
 		daemon_retval_send(0);
 	}
 
-	/*
-	 *      config signal handlers
-	 */
+	dlog(LOG_DEBUG, 3, "Initializing privsep");
+	if (privsep_init() < 0) {
+		flog(LOG_INFO, "Failed to initialize privsep.");
+		exit(1);
+	}
+
+	if (username) {
+		if (drop_root_privileges(username) < 0) {
+			perror("drop_root_privileges");
+			flog(LOG_ERR, "unable to drop root privileges");
+			exit(1);
+		}
+	}
+
 	signal(SIGHUP, sighup_handler);
 	signal(SIGTERM, sigterm_handler);
 	signal(SIGINT, sigint_handler);
