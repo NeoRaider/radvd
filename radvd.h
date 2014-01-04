@@ -179,9 +179,6 @@ struct HomeAgentInfo {
 /* gram.y */
 struct Interface *readin_config(char *fname);
 
-/* scanner.l */
-int yylex(void);
-
 /* radvd.c */
 int check_ip6_forwarding(void);
 

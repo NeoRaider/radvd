@@ -18,8 +18,6 @@
 %option bison-locations
 %option noyywrap
 %option yylineno
-%option outfile="lex.yy.c"
-%option header="../scanner.h"
 %option nounput
 %option noinput
 

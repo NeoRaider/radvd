@@ -964,41 +964,7 @@ void cleanup(void)
 	}
 }
 
-int
-readin_config(char *fname)
-{
-	struct yydata yydata;
-	FILE * in;
-	int rc = 0;
-
-	in = fopen(fname, "r");
-
-	if (!in)
-	{
-		flog(LOG_ERR, "can't open %s: %s", fname, strerror(errno));
-		return (-1);
-	}
-
-	yydata.filename = fname;
-	yylex_init(&yydata.scaninfo);
-	yyset_in(in, yydata.scaninfo);
-
-	if (yyparse(&yydata) != 0)
-	{
-		flog(LOG_ERR, "error parsing or activating the config file: %s", fname);
-		rc = -1;
-	}
-
-	yylex_destroy(yydata.scaninfo);
-
-	fclose(in);
-
-	return rc;
-}
-
-
-static void
-yyerror(void const * loc, void * vp, char const * msg)
+static void yyerror(void const * loc, void * vp, char const * msg)
 {
 	char * str1 = 0;
 	char * str2 = 0;
@@ -1042,24 +1008,33 @@ yyerror(void const * loc, void * vp, char const * msg)
 	}
 }
 
-extern FILE * yyin;
-
 struct Interface * readin_config(char *fname)
 {
-	if ((yyin = fopen(fname, "r")) == NULL)
+	struct yydata yydata;
+	FILE * in;
+
+	in = fopen(fname, "r");
+
+	if (!in)
 	{
 		flog(LOG_ERR, "can't open %s: %s", fname, strerror(errno));
 		return 0;
 	}
 
+	yydata.filename = fname;
+	yylex_init(&yydata.scaninfo);
+	yyset_in(in, yydata.scaninfo);
+
 	IfaceList = 0;
-	if (yyparse() != 0)
+	if (yyparse(&yydata) != 0)
 	{
 		flog(LOG_ERR, "error parsing or activating the config file: %s", fname);
-		return 0;
 	}
 
-	fclose(yyin);
+	yylex_destroy(yydata.scaninfo);
+
+	fclose(in);
+
 	return IfaceList;
 }
 
