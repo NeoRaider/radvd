@@ -154,7 +154,12 @@ static struct in6_addr get_prefix6(struct in6_addr const *addr, struct in6_addr 
 
 %{
 #include "scanner.h"
-#include "parser.h"
+struct yydata
+{
+	yyscan_t scaninfo;
+	char const * filename;
+};
+
 #define YYLEX_PARAM yydata->scaninfo
 %}
 
