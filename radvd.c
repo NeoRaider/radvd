@@ -29,20 +29,23 @@
 #ifdef HAVE_GETOPT_LONG
 
 static char usage_str[] = {
-	"\n" "  -c, --configtest       Parse the config file and exit.\n"
-	    "  -C, --config=PATH      Sets the config file.  Default is /etc/radvd.conf.\n"
-	    "  -d, --debug=NUM        Sets the debug level.  Values can be 1, 2, 3, 4 or 5.\n"
-	    "  -f, --facility=NUM     Sets the logging facility.\n"
-	    "  -h, --help             Show this help screen.\n"
-	    "  -l, --logfile=PATH     Sets the log file.\n"
-	    "  -m, --logmethod=X      Sets the log method to one of: syslog, stderr, stderr_syslog, logfile, or none.\n"
-	    "  -p, --pidfile=PATH     Sets the pid file.\n"
-	    "  -t, --chrootdir=PATH   Chroot to the specified path.\n"
-	    "  -u, --username=USER    Switch to the specified user.\n" "  -n, --nodaemon         Prevent the daemonizing.\n"
+	"\n"
+	"  -c, --configtest        Parse the config file and exit.\n"
+	"  -C, --config=PATH       Sets the config file.  Default is /etc/radvd.conf.\n"
+	"  -d, --debug=NUM         Sets the debug level.  Values can be 1, 2, 3, 4 or 5.\n"
+	"  -f, --facility=NUM      Sets the logging facility.\n"
+	"  -h, --help              Show this help screen.\n"
+	"  -l, --logfile=PATH      Sets the log file.\n"
+	"  -m, --logmethod=X       Sets the log method to one of: syslog, stderr, stderr_syslog, logfile, or none.\n"
+	"  -p, --pidfile=PATH      Sets the pid file.\n"
+	"  -t, --chrootdir=PATH    Chroot to the specified path.\n"
+	"  -u, --username=USER     Switch to the specified user.\n"
+	"  -n, --nodaemon          Prevent the daemonizing.\n"
 #ifdef HAVE_NETLINK
-	    "  -L, --disablenetlink     Disable netlink feature\n"
+	"  -L, --disablenetlink    Disable netlink feature\n"
 #endif
-	"  -I, --disableigmp6check    Disable igmp6 check before send\n" "  -v, --version          Print the version and quit.\n"
+	"  -I, --disableigmp6check Disable igmp6 check before send\n"
+	"  -v, --version           Print the version and quit.\n"
 };
 
 static struct option prog_opt[] = {
