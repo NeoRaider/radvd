@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 	 */
 	if (check_conffile_perm(username, conf_file) < 0) {
 		if (get_debuglevel() == 0) {
-			flog(LOG_ERR, "Exiting, permissions on conf_file invalid.\n");
+			flog(LOG_ERR, "Exiting, permissions on conf_file invalid.");
 			exit(1);
 		} else
 			flog(LOG_WARNING, "Insecure file permissions, but continuing anyway");
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
 
 	/* parse config file */
 	if ((IfaceList = readin_config(conf_file)) == 0) {
-		flog(LOG_ERR, "Exiting, failed to read config file.\n");
+		flog(LOG_ERR, "Exiting, failed to read config file.");
 		exit(1);
 	}
 
@@ -300,7 +300,8 @@ int main(int argc, char *argv[])
 		if (0 < pid) {
 			switch (daemon_retval_wait(1)) {
 			case 0:
-				dlog(LOG_DEBUG, 3, "new radvd PID is %ld", pid);
+				dlog(LOG_DEBUG, 3, "old radvd PID is %d", getpid());
+				dlog(LOG_DEBUG, 3, "new radvd PID is %d", pid);
 				exit(0);
 			break;
 
@@ -458,18 +459,18 @@ void main_loop(int sock, struct Interface *IfaceList)
 		}
 
 		if (sigterm_received || sigint_received) {
-			flog(LOG_WARNING, "Exiting, sigterm or sigint received.\n");
+			flog(LOG_WARNING, "Exiting, sigterm or sigint received.");
 			break;
 		}
 
 		if (sighup_received) {
-			dlog(LOG_INFO, 3, "sig hup received.\n");
+			dlog(LOG_INFO, 3, "sig hup received.");
 			IfaceList = reload_config(sock, IfaceList);
 			sighup_received = 0;
 		}
 
 		if (sigusr1_received) {
-			dlog(LOG_INFO, 3, "sig usr1 received.\n");
+			dlog(LOG_INFO, 3, "sig usr1 received.");
 			reset_prefix_lifetimes(IfaceList);
 			sigusr1_received = 0;
 		}

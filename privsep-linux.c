@@ -129,6 +129,7 @@ int privsep_init(void)
 
 	if (pid == 0) {
 		int nullfd;
+		dlog(LOG_DEBUG, 3, "radvd privsep PID is %d", getpid());
 
 		/* This will be the privileged child */
 		close(pipefds[1]);
