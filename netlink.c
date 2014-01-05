@@ -77,6 +77,16 @@ int process_netlink_msg(int sock)
 					++rc;
 				}
 			}
+
+			/* TODO: This would be a good place for a hash table lookup */
+			for (iface=IfaceList; iface; iface=iface->next) {
+				if (iface->if_index == ifinfo->ifi_index) {
+					double next;
+					iface->init_racount = 0;
+					iface->next_multicast = next_timeval(0);
+				}
+			}
+
 		}
 	}
 
